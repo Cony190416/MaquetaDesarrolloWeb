@@ -44,8 +44,18 @@ PRODUCTS.forEach(product => {
 
 // Inicialización cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando app...');
     initializeApp();
     initializeSearch();
+    
+    // Forzar renderizado de productos si estamos en una página de demo
+    setTimeout(() => {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        if (currentPage.includes('demo')) {
+            console.log('Forzando renderizado de productos...');
+            renderProducts();
+        }
+    }, 1000);
 });
 
 // Funcionalidad de búsqueda

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Básica - Catálogo de Productos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🎨 SublimaciónPro</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Buscar productos..." id="search-input">
+                    <button type="button">🔍</button>
+                </div>
+                <nav class="nav-menu">
+                    <a href="/index.html">Inicio</a>
+                    <a href="/maqueta-basica.html">Propuesta</a>
+                    <a href="#" class="active">Catálogo</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="products-section">
+                    <div class="section-header">
+                        <h2>Nuestros Productos</h2>
+                        <p>Haz clic en cualquier producto para ver más detalles y agregarlo a tu pedido</p>
+                    </div>
+                    
+                    <div class="products-grid">
+                        <!-- Los productos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 - Demo Básica - Desarrollo Web Profesional</p>
+        </footer>
+    </div>
+
+    <!-- Cargar archivos JavaScript con manejo de errores -->
+    <script>
+        // Función para cargar script con manejo de errores
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            script.onerror = function() {
+                console.error('Error cargando:', src);
+                // Intentar cargar con ruta absoluta
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = window.location.origin + '/' + src;
+                fallbackScript.onload = callback;
+                fallbackScript.onerror = function() {
+                    console.error('Error cargando fallback:', src);
+                };
+                document.head.appendChild(fallbackScript);
+            };
+            document.head.appendChild(script);
+        }
+
+        // Cargar archivos en secuencia
+        loadScript('config.js', function() {
+            console.log('config.js cargado');
+            loadScript('js/script.js', function() {
+                console.log('script.js cargado');
+                // Inicializar la aplicación
+                if (typeof initializeApp === 'function') {
+                    initializeApp();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

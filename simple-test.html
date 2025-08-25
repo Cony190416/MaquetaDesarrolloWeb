@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple - Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Simple - Productos</h1>
+        
+        <div id="status" class="status">Cargando...</div>
+        
+        <div id="products"></div>
+        
+        <div style="margin-top: 20px;">
+            <a href="index.html">← Volver al inicio</a>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar estado
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + (isError ? 'error' : 'success');
+        }
+
+        // Función para mostrar productos
+        function showProducts() {
+            if (typeof PRODUCTS !== 'undefined' && PRODUCTS.length > 0) {
+                showStatus(`✅ ${PRODUCTS.length} productos cargados correctamente`);
+                
+                const productsDiv = document.getElementById('products');
+                productsDiv.innerHTML = '<h2>Productos disponibles:</h2>';
+                
+                PRODUCTS.forEach(product => {
+                    productsDiv.innerHTML += `
+                        <div class="product">
+                            <h3>${product.name}</h3>
+                            <p>Precio: $${product.price}</p>
+                            <p>Stock: ${product.stock}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                showStatus('❌ No se pudieron cargar los productos', true);
+            }
+        }
+
+        // Verificar cuando se carguen los scripts
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (typeof PRODUCTS !== 'undefined') {
+                    showProducts();
+                } else {
+                    showStatus('❌ Los archivos JavaScript no se cargaron', true);
+                }
+            }, 2000);
+        });
+    </script>
+
+    <script src="config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

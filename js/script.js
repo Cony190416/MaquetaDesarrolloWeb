@@ -481,6 +481,8 @@ function addToBasicOrder(productId) {
         console.log('Nuevo producto agregado:', newItem);
     }
     
+    console.log('Estado completo de currentOrder después de agregar:', currentOrder);
+    
     inventory[productId] -= quantity;
     console.log('Inventario actualizado para producto', productId, ':', inventory[productId]);
     console.log('Total productos en currentOrder:', currentOrder.length);
@@ -524,6 +526,9 @@ function updateBasicCartIcon() {
 }
 
 function toggleBasicCart() {
+    console.log('Función toggleBasicCart llamada');
+    console.log('Productos en currentOrder:', currentOrder);
+    
     const existingCart = document.querySelector('.basic-cart-sidebar');
     if (existingCart) {
         existingCart.remove();
@@ -535,9 +540,14 @@ function toggleBasicCart() {
     
     if (currentOrder.length === 0) {
         cartSidebar.innerHTML = '<p>No hay productos en el pedido</p>';
+        console.log('Carrito básico vacío mostrado');
     } else {
         const totalPrice = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const totalQuantity = currentOrder.reduce((sum, item) => sum + item.quantity, 0);
+        
+        console.log('Renderizando carrito básico con productos:', currentOrder.length);
+        console.log('Total precio:', totalPrice);
+        console.log('Total cantidad:', totalQuantity);
         
         cartSidebar.innerHTML = `
             <div class="cart-header">
@@ -575,6 +585,7 @@ function toggleBasicCart() {
     }
     
     document.body.appendChild(cartSidebar);
+    console.log('Carrito básico renderizado');
 }
 
 function updateBasicCartItemQuantity(index, newQuantity) {
@@ -803,6 +814,9 @@ function renderInventory() {
 
 // Generación de pedidos
 function generateBasicOrder() {
+    console.log('Función generateBasicOrder llamada');
+    console.log('Productos en currentOrder:', currentOrder);
+    
     if (currentOrder.length === 0) {
         alert('No hay productos en el pedido');
         return;
@@ -816,6 +830,9 @@ function generateBasicOrder() {
 
     const message = `Hola, mi número de pedido es ${orderId} y quiero estos productos:\n\n${orderSummary}\n\nTotal: $${totalPrice.toLocaleString('es-CL')}\n\n¿Podrían confirmarme la disponibilidad y el tiempo de entrega?`;
 
+    console.log('Mensaje de WhatsApp generado:', message);
+    console.log('URL de WhatsApp:', `https://wa.me/${CONFIG.contact.whatsapp}?text=${encodeURIComponent(message)}`);
+
     const whatsappUrl = `https://wa.me/${CONFIG.contact.whatsapp}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
     
@@ -827,6 +844,8 @@ function generateBasicOrder() {
         existingCart.remove();
     }
     showNotification('Pedido enviado por WhatsApp');
+    
+    console.log('Función generateBasicOrder completada - SOLO WhatsApp');
 }
 
 function generateRobustOrder() {

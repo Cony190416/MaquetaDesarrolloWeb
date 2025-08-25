@@ -64,6 +64,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderCartIcon();
             }
         }
+        
+        // Forzar inicialización de calculadoras
+        if (currentPage.includes('maqueta-basica')) {
+            console.log('Forzando inicialización de calculadora básica...');
+            setTimeout(() => initializeBasicCalculator(), 500);
+        } else if (currentPage.includes('maqueta-robusta')) {
+            console.log('Forzando inicialización de calculadora robusta...');
+            setTimeout(() => initializeRobustCalculator(), 500);
+        }
     }, 1000);
 });
 
@@ -279,13 +288,38 @@ function openRobustProductModal(productId) {
 // Funciones de personalización
 function updatePreview() {
     const previewImage = document.getElementById('preview-image');
-    const customText = document.getElementById('custom-text').value;
-    const fontFamily = document.getElementById('font-family').value;
-    const productColor = document.getElementById('product-color').value;
+    const customText = document.getElementById('custom-text');
+    const fontFamily = document.getElementById('font-family');
+    const productColor = document.getElementById('product-color');
     
-    // Aquí se actualizaría la vista previa con las personalizaciones
-    // Por simplicidad, solo cambiamos el color de fondo
-    previewImage.style.backgroundColor = productColor;
+    if (previewImage && customText && fontFamily && productColor) {
+        // Aquí se actualizaría la vista previa con las personalizaciones
+        // Por simplicidad, solo cambiamos el color de fondo
+        previewImage.style.backgroundColor = productColor.value;
+        
+        // Mostrar texto personalizado en la imagen si existe
+        if (customText.value) {
+            previewImage.style.position = 'relative';
+            if (!previewImage.querySelector('.custom-text-overlay')) {
+                const textOverlay = document.createElement('div');
+                textOverlay.className = 'custom-text-overlay';
+                textOverlay.style.cssText = `
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: #000;
+                    font-family: ${fontFamily.value};
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-align: center;
+                    z-index: 10;
+                `;
+                previewImage.appendChild(textOverlay);
+            }
+            previewImage.querySelector('.custom-text-overlay').textContent = customText.value;
+        }
+    }
 }
 
 function handleImageUpload(event) {
@@ -294,7 +328,9 @@ function handleImageUpload(event) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const previewImage = document.getElementById('preview-image');
-            previewImage.src = e.target.result;
+            if (previewImage) {
+                previewImage.src = e.target.result;
+            }
         };
         reader.readAsDataURL(file);
     }
@@ -356,23 +392,49 @@ function addToCartDirect(productId) {
 
 // Funciones del carrito básico (pedido)
 function addToBasicOrder(productId) {
-    const quantity = parseInt(document.getElementById(`quantity-${productId}`).value);
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
     const product = PRODUCTS.find(p => p.id === productId);
+    
+    if (!product) {
+        console.error('Producto no encontrado:', productId);
+        return;
+    }
     
     if (quantity > inventory[productId]) {
         alert('No hay suficiente stock disponible');
         return;
     }
     
+    // Obtener personalizaciones si están disponibles
+    const customizations = {
+        color: document.getElementById('product-color') ? document.getElementById('product-color').value : '#ffffff',
+        text: document.getElementById('custom-text') ? document.getElementById('custom-text').value : '',
+        font: document.getElementById('font-family') ? document.getElementById('font-family').value : 'Arial',
+        image: document.getElementById('custom-image') ? document.getElementById('custom-image').files[0] : null
+    };
+    
+    console.log('Agregando al pedido básico:', {
+        productId,
+        productName: product.name,
+        quantity,
+        customizations
+    });
+    
     const existingItem = currentOrder.find(item => item.id === productId);
     if (existingItem) {
         existingItem.quantity += quantity;
+        // Actualizar personalizaciones si son diferentes
+        if (customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image) {
+            existingItem.customizations = customizations;
+        }
     } else {
         currentOrder.push({
             id: productId,
             name: product.name,
             price: product.price,
-            quantity: quantity
+            quantity: quantity,
+            customizations: customizations
         });
     }
     
@@ -433,6 +495,7 @@ function toggleBasicCart() {
                             <div class="cart-item-info">
                                 <h4>${item.name}</h4>
                                 <p>$${item.price.toLocaleString('es-CL')} x ${item.quantity}</p>
+                                ${item.customizations && item.customizations.text ? `<p>Texto: "${item.customizations.text}"</p>` : ''}
                             </div>
                             <div class="cart-item-actions">
                                 <button onclick="updateBasicCartItemQuantity(${index}, ${item.quantity - 1})">-</button>
@@ -509,7 +572,7 @@ function addToCart(productId) {
         image: document.getElementById('custom-image') ? document.getElementById('custom-image').files[0] : null
     };
     
-    console.log('Agregando al carrito:', {
+    console.log('Agregando al carrito robusto:', {
         productId,
         productName: product.name,
         quantity,
@@ -808,6 +871,36 @@ function openBasicProductModal(productId) {
                         <p><strong>Material:</strong> Alta calidad</p>
                         <p><strong>Personalización:</strong> Sublimación digital</p>
                     </div>
+                    <div class="customization-section">
+                        <h3>Personalizar Producto</h3>
+                        
+                        <div class="customization-option">
+                            <label>Color del producto:</label>
+                            <input type="color" id="product-color" value="#ffffff" onchange="updatePreview()">
+                        </div>
+                        
+                        <div class="customization-option">
+                            <label>Texto personalizado:</label>
+                            <input type="text" id="custom-text" placeholder="Tu texto aquí" oninput="updatePreview()">
+                        </div>
+                        
+                        <div class="customization-option">
+                            <label>Fuente:</label>
+                            <select id="font-family" onchange="updatePreview()">
+                                <option value="Arial">Arial</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Verdana">Verdana</option>
+                            </select>
+                        </div>
+                        
+                        <div class="customization-option">
+                            <label>Subir imagen:</label>
+                            <input type="file" id="custom-image" accept="image/*" onchange="handleImageUpload(event)">
+                        </div>
+                    </div>
+                    
                     <div class="quantity-selector">
                         <label>Cantidad:</label>
                         <input type="number" id="quantity-${product.id}" value="1" min="1" max="${inventory[product.id]}">

@@ -822,6 +822,50 @@ body {
 
 .customization-section h3 {
     margin-bottom: var(--spacing-md);
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+.customization-option {
+    margin-bottom: var(--spacing-md);
+}
+
+.customization-option label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.customization-option input,
+.customization-option select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.9rem;
+}
+
+.customization-option input[type="color"] {
+    height: 40px;
+    cursor: pointer;
+}
+
+.product-modal-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+}
+
+.custom-text-overlay {
+    background: rgba(255, 255, 255, 0.8);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.customization-section h3 {
+    margin-bottom: var(--spacing-md);
     color: var(--gray-900);
 }
 

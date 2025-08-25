@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Verificación Netlify</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test de Verificación - Netlify</h1>
+        
+        <div id="config-status" class="status info">Verificando config.js...</div>
+        <div id="script-status" class="status info">Verificando script.js...</div>
+        <div id="products-status" class="status info">Verificando productos...</div>
+        
+        <div id="products-list"></div>
+        
+        <div style="margin-top: 20px;">
+            <a href="index.html" style="color: #007bff;">← Volver al inicio</a>
+        </div>
+    </div>
+
+    <script>
+        // Test 1: Verificar si config.js se carga
+        try {
+            if (typeof CONFIG !== 'undefined') {
+                document.getElementById('config-status').innerHTML = '✅ config.js cargado correctamente';
+                document.getElementById('config-status').className = 'status success';
+            } else {
+                document.getElementById('config-status').innerHTML = '❌ config.js NO se cargó';
+                document.getElementById('config-status').className = 'status error';
+            }
+        } catch (e) {
+            document.getElementById('config-status').innerHTML = '❌ Error cargando config.js: ' + e.message;
+            document.getElementById('config-status').className = 'status error';
+        }
+
+        // Test 2: Verificar si script.js se carga
+        try {
+            if (typeof PRODUCTS !== 'undefined') {
+                document.getElementById('script-status').innerHTML = '✅ script.js cargado correctamente';
+                document.getElementById('script-status').className = 'status success';
+            } else {
+                document.getElementById('script-status').innerHTML = '❌ script.js NO se cargó';
+                document.getElementById('script-status').className = 'status error';
+            }
+        } catch (e) {
+            document.getElementById('script-status').innerHTML = '❌ Error cargando script.js: ' + e.message;
+            document.getElementById('script-status').className = 'status error';
+        }
+
+        // Test 3: Verificar productos
+        try {
+            if (typeof PRODUCTS !== 'undefined' && PRODUCTS.length > 0) {
+                document.getElementById('products-status').innerHTML = `✅ ${PRODUCTS.length} productos cargados`;
+                document.getElementById('products-status').className = 'status success';
+                
+                // Mostrar lista de productos
+                const productsList = document.getElementById('products-list');
+                productsList.innerHTML = '<h3>Productos disponibles:</h3><ul>' + 
+                    PRODUCTS.map(p => `<li>${p.name} - $${p.price}</li>`).join('') + 
+                    '</ul>';
+            } else {
+                document.getElementById('products-status').innerHTML = '❌ No se encontraron productos';
+                document.getElementById('products-status').className = 'status error';
+            }
+        } catch (e) {
+            document.getElementById('products-status').innerHTML = '❌ Error verificando productos: ' + e.message;
+            document.getElementById('products-status').className = 'status error';
+        }
+    </script>
+
+    <script src="config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Pedido - SublimaciónPro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .confirmation-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .confirmation-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+        }
+
+        .confirmation-title {
+            color: #1e293b;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .confirmation-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .order-number {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .order-number h3 {
+            color: #1e293b;
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .order-number .number {
+            color: #3b82f6;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .order-details {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .order-details h4 {
+            color: #166534;
+            margin: 0 0 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dcfce7;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item .name {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .order-item .price {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .order-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #bbf7d0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #166534;
+        }
+
+        .contact-info {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .contact-info h4 {
+            color: #92400e;
+            margin: 0 0 10px 0;
+        }
+
+        .contact-info p {
+            color: #92400e;
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background: #128c7e;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .confirmation-card {
+                padding: 30px 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-whatsapp,
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <div class="success-icon">✓</div>
+            
+            <h1 class="confirmation-title">¡Pedido Recibido!</h1>
+            <p class="confirmation-subtitle">Hemos recibido tu pedido correctamente</p>
+            
+            <div class="order-number">
+                <h3>Número de Pedido:</h3>
+                <div class="number" id="order-number">ORD-123456</div>
+            </div>
+            
+            <div class="order-details">
+                <h4>Detalles del Pedido:</h4>
+                <div id="order-items">
+                    <!-- Los items se cargarán dinámicamente -->
+                </div>
+                <div class="order-total" id="order-total">
+                    Total: $0
+                </div>
+            </div>
+            
+            <div class="contact-info">
+                <h4>📞 Próximos Pasos</h4>
+                <p>• En 2 días hábiles te contactaremos para confirmar detalles</p>
+                <p>• Revisaremos disponibilidad de productos</p>
+                <p>• Coordinaremos fecha de entrega</p>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="#" class="btn-whatsapp" id="whatsapp-btn">
+                    📱 Contactar por WhatsApp
+                </a>
+                <a href="demo-robusta.html" class="btn-back">
+                    ← Volver al Catálogo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener datos del pedido desde localStorage o URL params
+        function getOrderData() {
+            // Intentar obtener desde localStorage
+            const orderData = localStorage.getItem('lastOrder');
+            if (orderData) {
+                return JSON.parse(orderData);
+            }
+            
+            // Si no hay datos, usar datos de ejemplo
+            return {
+                orderId: 'ORD-' + Date.now().toString().slice(-6),
+                items: [
+                    { name: 'Taza Personalizada', quantity: 2, price: 8500 },
+                    { name: 'Polera Sublimada', quantity: 1, price: 15000 }
+                ],
+                total: 32000,
+                customizations: {
+                    text: 'Texto personalizado',
+                    color: '#ff6b6b',
+                    font: 'Georgia'
+                }
+            };
+        }
+
+        function displayOrder() {
+            const orderData = getOrderData();
+            
+            // Mostrar número de pedido
+            document.getElementById('order-number').textContent = orderData.orderId;
+            
+            // Mostrar items del pedido
+            const orderItemsContainer = document.getElementById('order-items');
+            orderItemsContainer.innerHTML = orderData.items.map(item => `
+                <div class="order-item">
+                    <span class="name">${item.name} x${item.quantity}</span>
+                    <span class="price">$${(item.price * item.quantity).toLocaleString('es-CL')}</span>
+                </div>
+            `).join('');
+            
+            // Mostrar total
+            document.getElementById('order-total').textContent = `Total: $${orderData.total.toLocaleString('es-CL')}`;
+            
+            // Configurar botón de WhatsApp
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            const message = `Hola, mi número de pedido es ${orderData.orderId}. ¿Podrían confirmarme la disponibilidad y el tiempo de entrega?`;
+            const whatsappUrl = `https://wa.me/+56955368332?text=${encodeURIComponent(message)}`;
+            whatsappBtn.href = whatsappUrl;
+        }
+
+        // Inicializar página
+        displayOrder();
+    </script>
+</body>
+</html>

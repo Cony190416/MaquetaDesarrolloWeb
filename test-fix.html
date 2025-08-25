@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fix - Debugging Netlify</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Test Fix - Debugging Netlify</h1>
+        
+        <div id="file-check" class="status info">Verificando archivos...</div>
+        <div id="config-status" class="status info">Verificando config.js...</div>
+        <div id="script-status" class="status info">Verificando script.js...</div>
+        <div id="products-status" class="status info">Verificando productos...</div>
+        
+        <div id="debug-info" class="debug-info">
+            <strong>Información de Debug:</strong><br>
+            <div id="debug-content"></div>
+        </div>
+        
+        <div id="products-list"></div>
+        
+        <div style="margin-top: 20px;">
+            <a href="index.html" style="color: #007bff;">← Volver al inicio</a>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar información de debug
+        function showDebug(message) {
+            const debugContent = document.getElementById('debug-content');
+            debugContent.innerHTML += message + '<br>';
+        }
+
+        // Función para verificar si un archivo existe
+        async function checkFile(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // Función principal de verificación
+        async function runTests() {
+            showDebug('Iniciando verificación...');
+            
+            // Verificar archivos
+            const filesToCheck = [
+                'config.js',
+                'js/script.js',
+                'css/style.css',
+                'images/products/taza-personalizada.jpg'
+            ];
+
+            for (const file of filesToCheck) {
+                const exists = await checkFile(file);
+                showDebug(`${exists ? '✅' : '❌'} ${file} - ${exists ? 'EXISTE' : 'NO EXISTE'}`);
+            }
+
+            // Test 1: Verificar si config.js se carga
+            try {
+                if (typeof CONFIG !== 'undefined') {
+                    document.getElementById('config-status').innerHTML = '✅ config.js cargado correctamente';
+                    document.getElementById('config-status').className = 'status success';
+                    showDebug('CONFIG cargado: ' + JSON.stringify(CONFIG.contact));
+                } else {
+                    document.getElementById('config-status').innerHTML = '❌ config.js NO se cargó';
+                    document.getElementById('config-status').className = 'status error';
+                    showDebug('CONFIG no está definido');
+                }
+            } catch (e) {
+                document.getElementById('config-status').innerHTML = '❌ Error cargando config.js: ' + e.message;
+                document.getElementById('config-status').className = 'status error';
+                showDebug('Error CONFIG: ' + e.message);
+            }
+
+            // Test 2: Verificar si script.js se carga
+            try {
+                if (typeof PRODUCTS !== 'undefined') {
+                    document.getElementById('script-status').innerHTML = '✅ script.js cargado correctamente';
+                    document.getElementById('script-status').className = 'status success';
+                    showDebug('PRODUCTS cargado: ' + PRODUCTS.length + ' productos');
+                } else {
+                    document.getElementById('script-status').innerHTML = '❌ script.js NO se cargó';
+                    document.getElementById('script-status').className = 'status error';
+                    showDebug('PRODUCTS no está definido');
+                }
+            } catch (e) {
+                document.getElementById('script-status').innerHTML = '❌ Error cargando script.js: ' + e.message;
+                document.getElementById('script-status').className = 'status error';
+                showDebug('Error PRODUCTS: ' + e.message);
+            }
+
+            // Test 3: Verificar productos
+            try {
+                if (typeof PRODUCTS !== 'undefined' && PRODUCTS.length > 0) {
+                    document.getElementById('products-status').innerHTML = `✅ ${PRODUCTS.length} productos cargados`;
+                    document.getElementById('products-status').className = 'status success';
+                    
+                    // Mostrar lista de productos
+                    const productsList = document.getElementById('products-list');
+                    productsList.innerHTML = '<h3>Productos disponibles:</h3><ul>' + 
+                        PRODUCTS.map(p => `<li>${p.name} - $${p.price}</li>`).join('') + 
+                        '</ul>';
+                } else {
+                    document.getElementById('products-status').innerHTML = '❌ No se encontraron productos';
+                    document.getElementById('products-status').className = 'status error';
+                }
+            } catch (e) {
+                document.getElementById('products-status').innerHTML = '❌ Error verificando productos: ' + e.message;
+                document.getElementById('products-status').className = 'status error';
+            }
+        }
+
+        // Ejecutar tests cuando se carguen los scripts
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runTests, 1000); // Esperar 1 segundo para que se carguen los scripts
+        });
+    </script>
+
+    <script src="config.js" onload="showDebug('config.js cargado')" onerror="showDebug('Error cargando config.js')"></script>
+    <script src="js/script.js" onload="showDebug('script.js cargado')" onerror="showDebug('Error cargando script.js')"></script>
+</body>
+</html>

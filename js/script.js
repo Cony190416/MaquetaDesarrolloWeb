@@ -362,12 +362,6 @@ function handleImageUpload(event) {
 
 // Funciones para agregar productos directamente
 function addToBasicOrderDirect(productId) {
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage !== 'demo-basica.html') {
-        console.error('addToBasicOrderDirect llamada desde página incorrecta:', currentPage);
-        return;
-    }
-    
     const product = PRODUCTS.find(p => p.id === productId);
     
     if (!product) {
@@ -401,12 +395,6 @@ function addToBasicOrderDirect(productId) {
 }
 
 function addToCartDirect(productId) {
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage !== 'demo-robusta.html') {
-        console.error('addToCartDirect llamada desde página incorrecta:', currentPage);
-        return;
-    }
-    
     const product = PRODUCTS.find(p => p.id === productId);
     
     if (!product) {
@@ -442,12 +430,6 @@ function addToCartDirect(productId) {
 
 // Funciones del carrito básico (pedido)
 function addToBasicOrder(productId) {
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage !== 'demo-basica.html') {
-        console.error('addToBasicOrder llamada desde página incorrecta:', currentPage);
-        return;
-    }
-    
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
     const product = PRODUCTS.find(p => p.id === productId);
@@ -616,12 +598,6 @@ function removeFromBasicCart(index) {
 
 // Funciones del carrito robusto
 function addToCart(productId) {
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage !== 'demo-robusta.html') {
-        console.error('addToCart llamada desde página incorrecta:', currentPage);
-        return;
-    }
-    
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
     const product = PRODUCTS.find(p => p.id === productId);
@@ -814,12 +790,6 @@ function renderInventory() {
 // Generación de pedidos
 function generateBasicOrder() {
     // Función BÁSICA - SOLO WHATSAPP
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage !== 'demo-basica.html') {
-        console.error('generateBasicOrder llamada desde página incorrecta:', currentPage);
-        return;
-    }
-    
     if (currentOrder.length === 0) {
         alert('No hay productos en el pedido');
         return;
@@ -848,12 +818,6 @@ function generateBasicOrder() {
 
 function generateRobustOrder() {
     // Función ROBUSTA - SOLO PÁGINA DE CONFIRMACIÓN
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage !== 'demo-robusta.html') {
-        console.error('generateRobustOrder llamada desde página incorrecta:', currentPage);
-        return;
-    }
-    
     if (cart.length === 0) {
         alert('El carrito está vacío');
         return;

@@ -48,22 +48,40 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
     initializeSearch();
     
-    // Forzar renderizado de productos si estamos en una página de demo
-    setTimeout(() => {
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        if (currentPage.includes('demo')) {
-            console.log('Forzando renderizado de productos...');
-            renderProducts();
-            
-            // Forzar renderizado del carrito
-            if (currentPage.includes('demo-basica')) {
-                console.log('Forzando renderizado del carrito básico...');
-                renderBasicCartIcon();
-            } else if (currentPage.includes('demo-robusta')) {
-                console.log('Forzando renderizado del carrito robusto...');
-                renderCartIcon();
+            // Forzar renderizado de productos si estamos en una página de demo
+        setTimeout(() => {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            if (currentPage.includes('demo')) {
+                console.log('Forzando renderizado de productos...');
+                renderProducts();
+                
+                // Forzar renderizado del carrito
+                if (currentPage.includes('demo-basica')) {
+                    console.log('Forzando renderizado del carrito básico...');
+                    renderBasicCartIcon();
+                    
+                    // Verificar que el carrito se renderizó correctamente
+                    setTimeout(() => {
+                        const cartIcon = document.querySelector('.cart-icon.basic-cart');
+                        if (!cartIcon) {
+                            console.log('Carrito básico no encontrado, re-renderizando...');
+                            renderBasicCartIcon();
+                        }
+                    }, 500);
+                } else if (currentPage.includes('demo-robusta')) {
+                    console.log('Forzando renderizado del carrito robusto...');
+                    renderCartIcon();
+                    
+                    // Verificar que el carrito se renderizó correctamente
+                    setTimeout(() => {
+                        const cartIcon = document.querySelector('.cart-icon:not(.basic-cart)');
+                        if (!cartIcon) {
+                            console.log('Carrito robusto no encontrado, re-renderizando...');
+                            renderCartIcon();
+                        }
+                    }, 500);
+                }
             }
-        }
         
         // Forzar inicialización de calculadoras
         if (currentPage.includes('maqueta-basica')) {
@@ -340,6 +358,11 @@ function handleImageUpload(event) {
 function addToBasicOrderDirect(productId) {
     const product = PRODUCTS.find(p => p.id === productId);
     
+    if (!product) {
+        console.error('Producto no encontrado:', productId);
+        return;
+    }
+    
     if (inventory[productId] <= 0) {
         alert('No hay stock disponible');
         return;
@@ -353,7 +376,8 @@ function addToBasicOrderDirect(productId) {
             id: productId,
             name: product.name,
             price: product.price,
-            quantity: 1
+            quantity: 1,
+            customizations: {}
         });
     }
     
@@ -361,10 +385,17 @@ function addToBasicOrderDirect(productId) {
     updateBasicCartIcon();
     renderProducts();
     showNotification('Producto agregado al pedido');
+    
+    console.log('Producto agregado directamente al pedido básico:', product.name, 'Total productos:', currentOrder.length);
 }
 
 function addToCartDirect(productId) {
     const product = PRODUCTS.find(p => p.id === productId);
+    
+    if (!product) {
+        console.error('Producto no encontrado:', productId);
+        return;
+    }
     
     if (inventory[productId] <= 0) {
         alert('No hay stock disponible');
@@ -388,6 +419,8 @@ function addToCartDirect(productId) {
     updateCartIcon();
     renderProducts();
     showNotification('Producto agregado al carrito');
+    
+    console.log('Producto agregado directamente al carrito robusto:', product.name, 'Total productos:', cart.length);
 }
 
 // Funciones del carrito básico (pedido)
@@ -446,6 +479,12 @@ function addToBasicOrder(productId) {
 }
 
 function renderBasicCartIcon() {
+    // Remover carrito existente si existe
+    const existingCart = document.querySelector('.cart-icon.basic-cart');
+    if (existingCart) {
+        existingCart.remove();
+    }
+    
     const cartIcon = document.createElement('div');
     cartIcon.className = 'cart-icon basic-cart';
     cartIcon.innerHTML = `
@@ -454,12 +493,18 @@ function renderBasicCartIcon() {
         </div>
     `;
     document.body.appendChild(cartIcon);
+    
+    console.log('Carrito básico renderizado con', currentOrder.length, 'productos');
 }
 
 function updateBasicCartIcon() {
     const cartCount = document.querySelector('.basic-cart .cart-count');
     if (cartCount) {
         cartCount.textContent = currentOrder.length;
+        console.log('Contador del carrito básico actualizado:', currentOrder.length);
+    } else {
+        console.log('No se encontró el contador del carrito básico, re-renderizando...');
+        renderBasicCartIcon();
     }
 }
 
@@ -601,9 +646,17 @@ function addToCart(productId) {
     updateCartIcon();
     renderProducts();
     showNotification('Producto agregado al carrito');
+    
+    console.log('Producto agregado al carrito robusto desde modal:', product.name, 'Total productos:', cart.length);
 }
 
 function renderCartIcon() {
+    // Remover carrito existente si existe
+    const existingCart = document.querySelector('.cart-icon:not(.basic-cart)');
+    if (existingCart) {
+        existingCart.remove();
+    }
+    
     const cartIcon = document.createElement('div');
     cartIcon.className = 'cart-icon';
     cartIcon.innerHTML = `
@@ -612,12 +665,18 @@ function renderCartIcon() {
         </div>
     `;
     document.body.appendChild(cartIcon);
+    
+    console.log('Carrito robusto renderizado con', cart.length, 'productos');
 }
 
 function updateCartIcon() {
-    const cartCount = document.querySelector('.cart-count');
+    const cartCount = document.querySelector('.cart-icon:not(.basic-cart) .cart-count');
     if (cartCount) {
         cartCount.textContent = cart.length;
+        console.log('Contador del carrito robusto actualizado:', cart.length);
+    } else {
+        console.log('No se encontró el contador del carrito robusto, re-renderizando...');
+        renderCartIcon();
     }
 }
 

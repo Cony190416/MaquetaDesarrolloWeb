@@ -143,11 +143,17 @@ function initializeApp() {
         case 'demo-basica.html':
             renderProducts();
             renderBasicCartIcon();
+            // Asegurar que no se renderice el carrito robusto
+            const existingRobustCart = document.querySelector('.cart-icon:not(.basic-cart)');
+            if (existingRobustCart) existingRobustCart.remove();
             initializeSearch();
             break;
         case 'demo-robusta.html':
             renderProducts();
             renderCartIcon();
+            // Asegurar que no se renderice el carrito básico
+            const existingBasicCart = document.querySelector('.cart-icon.basic-cart');
+            if (existingBasicCart) existingBasicCart.remove();
             renderInventory();
             initializeSearch();
             break;
@@ -419,22 +425,14 @@ function addToCartDirect(productId) {
     renderProducts();
     showNotification('Producto agregado al carrito');
     
-    console.log('Producto agregado directamente al carrito robusto:', product.name, 'Total productos:', cart.length);
+
 }
 
 // Funciones del carrito básico (pedido)
 function addToBasicOrder(productId) {
-    console.log('=== FUNCIÓN ADD TO BASIC ORDER ===');
-    console.log('ProductId recibido:', productId);
-    
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
     const product = PRODUCTS.find(p => p.id === productId);
-    
-    console.log('Quantity input:', quantityInput);
-    console.log('Quantity calculada:', quantity);
-    console.log('Producto encontrado:', product);
-    console.log('CurrentOrder antes:', currentOrder);
     
     if (!product) {
         console.error('Producto no encontrado:', productId);
@@ -454,36 +452,32 @@ function addToBasicOrder(productId) {
         image: document.getElementById('custom-image') ? document.getElementById('custom-image').files[0] : null
     };
     
-    console.log('Personalizaciones:', customizations);
+    // Solo agregar personalizaciones si realmente hay algo personalizado
+    const hasCustomizations = customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image;
     
     const existingItem = currentOrder.find(item => item.id === productId);
     if (existingItem) {
         existingItem.quantity += quantity;
-        if (customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image) {
+        // Solo actualizar personalizaciones si hay nuevas personalizaciones
+        if (hasCustomizations) {
             existingItem.customizations = customizations;
         }
-        console.log('Producto existente actualizado:', existingItem);
     } else {
         const newItem = {
             id: productId,
             name: product.name,
             price: product.price,
             quantity: quantity,
-            customizations: customizations
+            customizations: hasCustomizations ? customizations : {}
         };
         currentOrder.push(newItem);
-        console.log('Nuevo producto agregado:', newItem);
     }
-    
-    console.log('CurrentOrder después:', currentOrder);
     
     inventory[productId] -= quantity;
     closeModal();
     updateBasicCartIcon();
     renderProducts();
     showNotification('Producto agregado al pedido');
-    
-    console.log('=== FUNCIÓN COMPLETADA ===');
 }
 
 function renderBasicCartIcon() {
@@ -502,29 +496,19 @@ function renderBasicCartIcon() {
     `;
     document.body.appendChild(cartIcon);
     
-    console.log('Carrito básico renderizado con', currentOrder.length, 'productos');
+
 }
 
 function updateBasicCartIcon() {
-    console.log('=== UPDATE BASIC CART ICON ===');
-    console.log('CurrentOrder length:', currentOrder.length);
-    
     const cartCount = document.querySelector('.basic-cart .cart-count');
     if (cartCount) {
         cartCount.textContent = currentOrder.length;
-        console.log('Contador actualizado a:', currentOrder.length);
     } else {
-        console.log('Contador no encontrado, re-renderizando carrito...');
         renderBasicCartIcon();
     }
-    
-    console.log('=== UPDATE COMPLETADO ===');
 }
 
 function toggleBasicCart() {
-    console.log('Función toggleBasicCart llamada');
-    console.log('Productos en currentOrder:', currentOrder);
-    
     const existingCart = document.querySelector('.basic-cart-sidebar');
     if (existingCart) {
         existingCart.remove();
@@ -536,14 +520,9 @@ function toggleBasicCart() {
     
     if (currentOrder.length === 0) {
         cartSidebar.innerHTML = '<p>No hay productos en el pedido</p>';
-        console.log('Carrito básico vacío mostrado');
     } else {
         const totalPrice = currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const totalQuantity = currentOrder.reduce((sum, item) => sum + item.quantity, 0);
-        
-        console.log('Renderizando carrito básico con productos:', currentOrder.length);
-        console.log('Total precio:', totalPrice);
-        console.log('Total cantidad:', totalQuantity);
         
         cartSidebar.innerHTML = `
             <div class="cart-header">
@@ -562,6 +541,9 @@ function toggleBasicCart() {
                                 <h4>${item.name}</h4>
                                 <p>$${item.price.toLocaleString('es-CL')} x ${item.quantity}</p>
                                 ${item.customizations && item.customizations.text ? `<p>Texto: "${item.customizations.text}"</p>` : ''}
+                                ${item.customizations && item.customizations.color !== '#ffffff' ? `<p>Color: ${item.customizations.color}</p>` : ''}
+                                ${item.customizations && item.customizations.font !== 'Arial' ? `<p>Fuente: ${item.customizations.font}</p>` : ''}
+                                ${item.customizations && item.customizations.image ? `<p>Imagen personalizada: Sí</p>` : ''}
                             </div>
                             <div class="cart-item-actions">
                                 <button onclick="updateBasicCartItemQuantity(${index}, ${item.quantity - 1})">-</button>
@@ -581,7 +563,6 @@ function toggleBasicCart() {
     }
     
     document.body.appendChild(cartSidebar);
-    console.log('Carrito básico renderizado');
 }
 
 function updateBasicCartItemQuantity(index, newQuantity) {
@@ -639,18 +620,14 @@ function addToCart(productId) {
         image: document.getElementById('custom-image') ? document.getElementById('custom-image').files[0] : null
     };
     
-    console.log('Agregando al carrito robusto:', {
-        productId,
-        productName: product.name,
-        quantity,
-        customizations
-    });
+    // Solo agregar personalizaciones si realmente hay algo personalizado
+    const hasCustomizations = customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image;
     
     const existingItem = cart.find(item => item.id === productId);
     if (existingItem) {
         existingItem.quantity += quantity;
-        // Actualizar personalizaciones si son diferentes
-        if (customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image) {
+        // Solo actualizar personalizaciones si hay nuevas personalizaciones
+        if (hasCustomizations) {
             existingItem.customizations = customizations;
         }
     } else {
@@ -659,7 +636,7 @@ function addToCart(productId) {
             name: product.name,
             price: product.price,
             quantity: quantity,
-            customizations: customizations
+            customizations: hasCustomizations ? customizations : {}
         });
     }
     
@@ -669,7 +646,7 @@ function addToCart(productId) {
     renderProducts();
     showNotification('Producto agregado al carrito');
     
-    console.log('Producto agregado al carrito robusto desde modal:', product.name, 'Total productos:', cart.length);
+
 }
 
 function renderCartIcon() {
@@ -688,16 +665,15 @@ function renderCartIcon() {
     `;
     document.body.appendChild(cartIcon);
     
-    console.log('Carrito robusto renderizado con', cart.length, 'productos');
+
 }
 
 function updateCartIcon() {
     const cartCount = document.querySelector('.cart-icon:not(.basic-cart) .cart-count');
     if (cartCount) {
         cartCount.textContent = cart.length;
-        console.log('Contador del carrito robusto actualizado:', cart.length);
+    
     } else {
-        console.log('No se encontró el contador del carrito robusto, re-renderizando...');
         renderCartIcon();
     }
 }
@@ -734,6 +710,9 @@ function toggleCart() {
                                 <h4>${item.name}</h4>
                                 <p>$${item.price.toLocaleString('es-CL')} x ${item.quantity}</p>
                                 ${item.customizations.text ? `<p>Texto: "${item.customizations.text}"</p>` : ''}
+                                ${item.customizations.color !== '#ffffff' ? `<p>Color: ${item.customizations.color}</p>` : ''}
+                                ${item.customizations.font !== 'Arial' ? `<p>Fuente: ${item.customizations.font}</p>` : ''}
+                                ${item.customizations.image ? `<p>Imagen personalizada: Sí</p>` : ''}
                             </div>
                             <div class="cart-item-actions">
                                 <button onclick="updateCartItemQuantity(${index}, ${item.quantity - 1})">-</button>
@@ -810,7 +789,6 @@ function renderInventory() {
 
 // Generación de pedidos
 function generateBasicOrder() {
-    alert('FUNCIÓN BÁSICA - DEBE IR A WHATSAPP');
     // Función BÁSICA - SOLO WHATSAPP
     
     if (currentOrder.length === 0) {
@@ -840,7 +818,6 @@ function generateBasicOrder() {
 }
 
 function generateRobustOrder() {
-    alert('FUNCIÓN ROBUSTA - DEBE IR A PÁGINA DE CONFIRMACIÓN');
     // Función ROBUSTA - SOLO PÁGINA DE CONFIRMACIÓN
     
     if (cart.length === 0) {
@@ -993,7 +970,7 @@ function openBasicProductModal(productId) {
                         <label>Cantidad:</label>
                         <input type="number" id="quantity-${product.id}" value="1" min="1" max="${inventory[product.id]}">
                     </div>
-                    <button class="btn btn-primary" onclick="addToBasicOrder(${product.id}); console.log('Botón Agregar al pedido clickeado para producto:', ${product.id});">Agregar al pedido</button>
+                    <button class="btn btn-primary" onclick="addToBasicOrder(${product.id})">Agregar al pedido</button>
                 </div>
             </div>
         </div>

@@ -54,6 +54,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentPage.includes('demo')) {
             console.log('Forzando renderizado de productos...');
             renderProducts();
+            
+            // Forzar renderizado del carrito
+            if (currentPage.includes('demo-basica')) {
+                console.log('Forzando renderizado del carrito básico...');
+                renderBasicCartIcon();
+            } else if (currentPage.includes('demo-robusta')) {
+                console.log('Forzando renderizado del carrito robusto...');
+                renderCartIcon();
+            }
         }
     }, 1000);
 });
@@ -97,9 +106,11 @@ function initializeApp() {
         case '':
             break;
         case 'maqueta-basica.html':
+            console.log('Inicializando calculadora básica...');
             initializeBasicCalculator();
             break;
         case 'maqueta-robusta.html':
+            console.log('Inicializando calculadora robusta...');
             initializeRobustCalculator();
             break;
         case 'demo-basica.html':

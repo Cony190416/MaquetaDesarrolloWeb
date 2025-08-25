@@ -811,6 +811,7 @@ function renderInventory() {
 
 // Generación de pedidos
 function generateBasicOrder() {
+    console.log('🚨 FUNCIÓN BÁSICA - DEBE IR A WHATSAPP 🚨');
     console.log('Función generateBasicOrder llamada');
     console.log('Productos en currentOrder:', currentOrder);
     
@@ -846,6 +847,7 @@ function generateBasicOrder() {
 }
 
 function generateRobustOrder() {
+    console.log('🚨 FUNCIÓN ROBUSTA - DEBE IR A PÁGINA DE CONFIRMACIÓN 🚨');
     console.log('Función generateRobustOrder llamada');
     console.log('Productos en cart:', cart);
     

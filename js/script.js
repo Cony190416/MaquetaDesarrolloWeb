@@ -372,21 +372,20 @@ function addToBasicOrderDirect(productId) {
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
-        currentOrder.push({
+        const newItem = {
             id: productId,
             name: product.name,
             price: product.price,
             quantity: 1,
             customizations: {}
-        });
+        };
+        currentOrder.push(newItem);
     }
     
     inventory[productId] -= 1;
     updateBasicCartIcon();
     renderProducts();
     showNotification('Producto agregado al pedido');
-    
-    console.log('Producto agregado directamente al pedido básico:', product.name, 'Total productos:', currentOrder.length);
 }
 
 function addToCartDirect(productId) {
@@ -577,7 +576,7 @@ function toggleBasicCart() {
             <div class="cart-total">
                 <strong>Total: ${totalQuantity} productos - $${totalPrice.toLocaleString('es-CL')}</strong>
             </div>
-            <button class="btn btn-primary" onclick="generateBasicOrder()">Generar Pedido</button>
+                         <button class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); generateBasicOrder();">Generar Pedido</button>
         `;
     }
     
@@ -749,7 +748,7 @@ function toggleCart() {
             <div class="cart-total">
                 <strong>Total: $${totalPrice.toLocaleString('es-CL')}</strong>
             </div>
-            <button class="btn btn-primary" onclick="generateRobustOrder()">Finalizar Compra</button>
+                         <button class="btn btn-primary" onclick="event.preventDefault(); event.stopPropagation(); generateRobustOrder();">Finalizar Compra</button>
         `;
     }
     
@@ -811,9 +810,7 @@ function renderInventory() {
 
 // Generación de pedidos
 function generateBasicOrder() {
-    console.log('🚨 FUNCIÓN BÁSICA - DEBE IR A WHATSAPP 🚨');
-    console.log('Función generateBasicOrder llamada');
-    console.log('Productos en currentOrder:', currentOrder);
+    // Función BÁSICA - SOLO WHATSAPP
     
     if (currentOrder.length === 0) {
         alert('No hay productos en el pedido');
@@ -828,9 +825,6 @@ function generateBasicOrder() {
 
     const message = `Hola, mi número de pedido es ${orderId} y quiero estos productos:\n\n${orderSummary}\n\nTotal: $${totalPrice.toLocaleString('es-CL')}\n\n¿Podrían confirmarme la disponibilidad y el tiempo de entrega?`;
 
-    console.log('Mensaje de WhatsApp generado:', message);
-    console.log('URL de WhatsApp:', `https://wa.me/${CONFIG.contact.whatsapp}?text=${encodeURIComponent(message)}`);
-
     const whatsappUrl = `https://wa.me/${CONFIG.contact.whatsapp}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
     
@@ -842,14 +836,10 @@ function generateBasicOrder() {
         existingCart.remove();
     }
     showNotification('Pedido enviado por WhatsApp');
-    
-    console.log('Función generateBasicOrder completada - SOLO WhatsApp');
 }
 
 function generateRobustOrder() {
-    console.log('🚨 FUNCIÓN ROBUSTA - DEBE IR A PÁGINA DE CONFIRMACIÓN 🚨');
-    console.log('Función generateRobustOrder llamada');
-    console.log('Productos en cart:', cart);
+    // Función ROBUSTA - SOLO PÁGINA DE CONFIRMACIÓN
     
     if (cart.length === 0) {
         alert('El carrito está vacío');
@@ -869,10 +859,8 @@ function generateRobustOrder() {
         customizations: cart.length > 0 ? cart[0].customizations : {}
     };
     
-    console.log('Datos del pedido robusto:', orderData);
     localStorage.setItem('lastOrder', JSON.stringify(orderData));
     
-    console.log('Redirigiendo a order-confirmation.html');
     // Redirigir directamente a la página de confirmación
     window.location.href = 'order-confirmation.html';
 }

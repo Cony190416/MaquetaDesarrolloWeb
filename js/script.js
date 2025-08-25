@@ -425,9 +425,15 @@ function addToCartDirect(productId) {
 
 // Funciones del carrito básico (pedido)
 function addToBasicOrder(productId) {
+    console.log('Función addToBasicOrder llamada con productId:', productId);
+    
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
     const product = PRODUCTS.find(p => p.id === productId);
+    
+    console.log('Quantity input encontrado:', quantityInput);
+    console.log('Quantity calculada:', quantity);
+    console.log('Producto encontrado:', product);
     
     if (!product) {
         console.error('Producto no encontrado:', productId);
@@ -451,7 +457,8 @@ function addToBasicOrder(productId) {
         productId,
         productName: product.name,
         quantity,
-        customizations
+        customizations,
+        currentOrderLength: currentOrder.length
     });
     
     const existingItem = currentOrder.find(item => item.id === productId);
@@ -461,21 +468,29 @@ function addToBasicOrder(productId) {
         if (customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image) {
             existingItem.customizations = customizations;
         }
+        console.log('Producto existente actualizado:', existingItem);
     } else {
-        currentOrder.push({
+        const newItem = {
             id: productId,
             name: product.name,
             price: product.price,
             quantity: quantity,
             customizations: customizations
-        });
+        };
+        currentOrder.push(newItem);
+        console.log('Nuevo producto agregado:', newItem);
     }
     
     inventory[productId] -= quantity;
+    console.log('Inventario actualizado para producto', productId, ':', inventory[productId]);
+    console.log('Total productos en currentOrder:', currentOrder.length);
+    
     closeModal();
     updateBasicCartIcon();
     renderProducts(); // Actualizar stock mostrado
     showNotification('Producto agregado al pedido');
+    
+    console.log('Función addToBasicOrder completada');
 }
 
 function renderBasicCartIcon() {
@@ -964,7 +979,7 @@ function openBasicProductModal(productId) {
                         <label>Cantidad:</label>
                         <input type="number" id="quantity-${product.id}" value="1" min="1" max="${inventory[product.id]}">
                     </div>
-                    <button class="btn btn-primary" onclick="addToBasicOrder(${product.id})">Agregar al pedido</button>
+                    <button class="btn btn-primary" onclick="addToBasicOrder(${product.id}); console.log('Botón Agregar al pedido clickeado para producto:', ${product.id});">Agregar al pedido</button>
                 </div>
             </div>
         </div>

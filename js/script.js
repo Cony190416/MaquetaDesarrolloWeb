@@ -810,6 +810,7 @@ function renderInventory() {
 
 // Generación de pedidos
 function generateBasicOrder() {
+    alert('FUNCIÓN BÁSICA - DEBE IR A WHATSAPP');
     // Función BÁSICA - SOLO WHATSAPP
     
     if (currentOrder.length === 0) {
@@ -839,6 +840,7 @@ function generateBasicOrder() {
 }
 
 function generateRobustOrder() {
+    alert('FUNCIÓN ROBUSTA - DEBE IR A PÁGINA DE CONFIRMACIÓN');
     // Función ROBUSTA - SOLO PÁGINA DE CONFIRMACIÓN
     
     if (cart.length === 0) {

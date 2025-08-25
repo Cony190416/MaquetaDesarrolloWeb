@@ -425,15 +425,17 @@ function addToCartDirect(productId) {
 
 // Funciones del carrito básico (pedido)
 function addToBasicOrder(productId) {
-    console.log('Función addToBasicOrder llamada con productId:', productId);
+    console.log('=== FUNCIÓN ADD TO BASIC ORDER ===');
+    console.log('ProductId recibido:', productId);
     
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
     const product = PRODUCTS.find(p => p.id === productId);
     
-    console.log('Quantity input encontrado:', quantityInput);
+    console.log('Quantity input:', quantityInput);
     console.log('Quantity calculada:', quantity);
     console.log('Producto encontrado:', product);
+    console.log('CurrentOrder antes:', currentOrder);
     
     if (!product) {
         console.error('Producto no encontrado:', productId);
@@ -453,18 +455,11 @@ function addToBasicOrder(productId) {
         image: document.getElementById('custom-image') ? document.getElementById('custom-image').files[0] : null
     };
     
-    console.log('Agregando al pedido básico:', {
-        productId,
-        productName: product.name,
-        quantity,
-        customizations,
-        currentOrderLength: currentOrder.length
-    });
+    console.log('Personalizaciones:', customizations);
     
     const existingItem = currentOrder.find(item => item.id === productId);
     if (existingItem) {
         existingItem.quantity += quantity;
-        // Actualizar personalizaciones si son diferentes
         if (customizations.text || customizations.color !== '#ffffff' || customizations.font !== 'Arial' || customizations.image) {
             existingItem.customizations = customizations;
         }
@@ -481,18 +476,15 @@ function addToBasicOrder(productId) {
         console.log('Nuevo producto agregado:', newItem);
     }
     
-    console.log('Estado completo de currentOrder después de agregar:', currentOrder);
+    console.log('CurrentOrder después:', currentOrder);
     
     inventory[productId] -= quantity;
-    console.log('Inventario actualizado para producto', productId, ':', inventory[productId]);
-    console.log('Total productos en currentOrder:', currentOrder.length);
-    
     closeModal();
     updateBasicCartIcon();
-    renderProducts(); // Actualizar stock mostrado
+    renderProducts();
     showNotification('Producto agregado al pedido');
     
-    console.log('Función addToBasicOrder completada');
+    console.log('=== FUNCIÓN COMPLETADA ===');
 }
 
 function renderBasicCartIcon() {
@@ -515,14 +507,19 @@ function renderBasicCartIcon() {
 }
 
 function updateBasicCartIcon() {
+    console.log('=== UPDATE BASIC CART ICON ===');
+    console.log('CurrentOrder length:', currentOrder.length);
+    
     const cartCount = document.querySelector('.basic-cart .cart-count');
     if (cartCount) {
         cartCount.textContent = currentOrder.length;
-        console.log('Contador del carrito básico actualizado:', currentOrder.length);
+        console.log('Contador actualizado a:', currentOrder.length);
     } else {
-        console.log('No se encontró el contador del carrito básico, re-renderizando...');
+        console.log('Contador no encontrado, re-renderizando carrito...');
         renderBasicCartIcon();
     }
+    
+    console.log('=== UPDATE COMPLETADO ===');
 }
 
 function toggleBasicCart() {
@@ -849,6 +846,9 @@ function generateBasicOrder() {
 }
 
 function generateRobustOrder() {
+    console.log('Función generateRobustOrder llamada');
+    console.log('Productos en cart:', cart);
+    
     if (cart.length === 0) {
         alert('El carrito está vacío');
         return;
@@ -866,8 +866,11 @@ function generateRobustOrder() {
         total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
         customizations: cart.length > 0 ? cart[0].customizations : {}
     };
+    
+    console.log('Datos del pedido robusto:', orderData);
     localStorage.setItem('lastOrder', JSON.stringify(orderData));
     
+    console.log('Redirigiendo a order-confirmation.html');
     // Redirigir directamente a la página de confirmación
     window.location.href = 'order-confirmation.html';
 }

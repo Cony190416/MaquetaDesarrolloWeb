@@ -1,6 +1,52 @@
 [build]
   publish = "."
 
+# Redirects para URLs sin .html
+[[redirects]]
+  from = "/maqueta-basica"
+  to = "/maqueta-basica.html"
+  status = 200
+
+[[redirects]]
+  from = "/maqueta-robusta"
+  to = "/maqueta-robusta.html"
+  status = 200
+
+[[redirects]]
+  from = "/demo-basica"
+  to = "/demo-basica.html"
+  status = 200
+
+[[redirects]]
+  from = "/demo-robusta"
+  to = "/demo-robusta.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin-panel-demo"
+  to = "/admin-panel-demo.html"
+  status = 200
+
+[[redirects]]
+  from = "/order-confirmation"
+  to = "/order-confirmation.html"
+  status = 200
+
+[[redirects]]
+  from = "/test"
+  to = "/test.html"
+  status = 200
+
+[[redirects]]
+  from = "/test-fix"
+  to = "/test-fix.html"
+  status = 200
+
+[[redirects]]
+  from = "/debug-routes"
+  to = "/debug-routes.html"
+  status = 200
+
 # Headers para evitar cache
 [[headers]]
   for = "*.html"
